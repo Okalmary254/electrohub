@@ -10,6 +10,7 @@ from django.db.models import Case, When, Value, IntegerField
 
 from .models import Product, Category, ProductReview, ProductImage
 from .forms import ProductSearchForm, ProductReviewForm, ProductFilterForm
+from cart.forms import AddToCartForm
 
 
 def product_list(request):
@@ -108,6 +109,9 @@ def product_detail(request, slug):
     # Review form
     review_form = ProductReviewForm()
     
+    # Add to cart form
+    add_to_cart_form = AddToCartForm()
+    
     context = {
         'product': product,
         'reviews': reviews[:10],  # Show first 10 reviews
@@ -117,6 +121,7 @@ def product_detail(request, slug):
         'user_review': user_review,
         'related_products': related_products,
         'review_form': review_form,
+        'add_to_cart_form': add_to_cart_form,
     }
     
     return render(request, 'product/product_detail.html', context)

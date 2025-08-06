@@ -66,11 +66,14 @@
                             <a class="nav-link" href="{% url 'admin:login' %}">Login</a>
                         </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" id="cart-dropdown">
                             <i class="fas fa-shopping-cart"></i>
-                            <span class="badge bg-primary">0</span>
+                            <span class="badge bg-primary cart-badge">{{ cart_total_items }}</span>
                         </a>
+                        <div id="mini-cart-container">
+                            <!-- Mini cart content will be loaded here -->
+                        </div>
                     </li>
                 </ul>
             </div>
@@ -128,6 +131,68 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Cart functionality -->
+    <script>
+    $(document).ready(function() {
+        // Load cart summary on page load
+        updateCartBadge();
+        
+        // Update cart badge
+        function updateCartBadge() {
+            $.ajax({
+                url: '{% url "cart:summary" %}',
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('.cart-badge').text(response.total_items);
+                    }
+                },
+                error: function() {
+                    console.log('Error updating cart badge');
+                }
+            });
+        }
+        
+        // Load mini cart when dropdown is shown
+        $('#cart-dropdown').on('click', function(e) {
+            e.preventDefault();
+            loadMiniCart();
+        });
+        
+        function loadMiniCart() {
+            $.ajax({
+                url: '{% url "cart:mini_cart" %}',
+                type: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#mini-cart-container').html(response.html);
+                        $('.cart-badge').text(response.total_items);
+                        
+                        // Show dropdown manually
+                        const dropdown = new bootstrap.Dropdown(document.getElementById('cart-dropdown'));
+                        dropdown.show();
+                    }
+                },
+                error: function() {
+                    console.log('Error loading mini cart');
+                }
+            });
+        }
+        
+        // Global function to update cart badge (can be called from other pages)
+        window.updateCartBadge = updateCartBadge;
+        window.loadMiniCart = loadMiniCart;
+    });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

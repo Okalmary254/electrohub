@@ -113,9 +113,23 @@
             <!-- Actions -->
             <div class="mb-4">
                 {% if product.is_in_stock %}
-                    <button class="btn btn-primary btn-lg me-2">
-                        <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-                    </button>
+                    <form id="add-to-cart-form" class="d-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        <div class="input-group mb-3" style="max-width: 150px;">
+                            <button class="btn btn-outline-secondary" type="button" id="qty-decrease">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control text-center" name="quantity" value="1" 
+                                   min="1" max="{{ product.stock }}" id="quantity-input">
+                            <button class="btn btn-outline-secondary" type="button" id="qty-increase">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg me-2" id="add-to-cart-btn">
+                            <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                        </button>
+                    </form>
                     <button class="btn btn-outline-secondary">
                         <i class="fas fa-heart"></i> Wishlist
                     </button>
@@ -261,4 +275,101 @@
         </div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    const maxQuantity = {{ product.stock }};
+    
+    // Quantity increase/decrease buttons
+    $('#qty-increase').on('click', function() {
+        const input = $('#quantity-input');
+        const currentValue = parseInt(input.val());
+        if (currentValue < maxQuantity) {
+            input.val(currentValue + 1);
+        }
+    });
+    
+    $('#qty-decrease').on('click', function() {
+        const input = $('#quantity-input');
+        const currentValue = parseInt(input.val());
+        if (currentValue > 1) {
+            input.val(currentValue - 1);
+        }
+    });
+    
+    // Validate quantity input
+    $('#quantity-input').on('change', function() {
+        const value = parseInt($(this).val());
+        if (value < 1) {
+            $(this).val(1);
+        } else if (value > maxQuantity) {
+            $(this).val(maxQuantity);
+        }
+    });
+    
+    // Add to cart form submission
+    $('#add-to-cart-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        const form = $(this);
+        const button = $('#add-to-cart-btn');
+        const originalText = button.html();
+        
+        // Disable button and show loading
+        button.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Adding...');
+        
+        $.ajax({
+            url: '{% url "cart:add" %}',
+            type: 'POST',
+            data: form.serialize(),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    showNotification(response.message, 'success');
+                    
+                    // Update cart badge
+                    if (window.updateCartBadge) {
+                        window.updateCartBadge();
+                    }
+                    
+                    // Reset form
+                    $('#quantity-input').val(1);
+                } else {
+                    showNotification(response.error, 'error');
+                }
+            },
+            error: function() {
+                showNotification('Error adding product to cart. Please try again.', 'error');
+            },
+            complete: function() {
+                // Re-enable button
+                button.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+    
+    // Show notification function
+    function showNotification(message, type = 'success') {
+        const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        const alertHtml = `
+            <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+                 style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+        $('body').append(alertHtml);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            $('.alert').alert('close');
+        }, 5000);
+    }
+});
+</script>
 {% endblock %}
