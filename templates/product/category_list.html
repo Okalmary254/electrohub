@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories - ElectroHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Product Categories</h2>
+    
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'product:category_detail' category.slug %}" class="text-decoration-none">
+                                {{ category.name }}
+                            </a>
+                        </h5>
+                        {% if category.description %}
+                            <p class="card-text">{{ category.description|truncatewords:20 }}</p>
+                        {% endif %}
+                        
+                        <p class="text-muted small mb-3">
+                            {{ category.products.count }} product{{ category.products.count|pluralize }}
+                        </p>
+                        
+                        <!-- Subcategories -->
+                        {% if category.subcategories.all %}
+                            <h6 class="text-muted">Subcategories:</h6>
+                            <ul class="list-unstyled">
+                                {% for subcategory in category.subcategories.all %}
+                                    <li>
+                                        <a href="{% url 'product:category_detail' subcategory.slug %}" class="text-decoration-none">
+                                            {{ subcategory.name }}
+                                        </a>
+                                        <span class="text-muted small">({{ subcategory.products.count }})</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                        
+                        <div class="mt-auto">
+                            <a href="{% url 'product:category_detail' category.slug %}" class="btn btn-primary">
+                                View Products
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-tags fa-3x text-muted mb-3"></i>
+                    <h4>No categories found</h4>
+                    <p class="text-muted">Categories will appear here once they are created.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Featured Products - ElectroHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-star text-warning me-2"></i>Featured Products
+            {% if total_products %}
+                <small class="text-muted">({{ total_products }} products)</small>
+            {% endif %}
+        </h2>
+    </div>
+    
+    {% if page_obj %}
+        <div class="row">
+            {% for product in page_obj %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" class="card-img-top" 
+                                 alt="{{ product.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <span class="badge bg-warning text-dark mb-2 align-self-start">Featured</span>
+                            <h6 class="card-title">{{ product.title }}</h6>
+                            <p class="text-muted small mb-2">{{ product.make }}</p>
+                            <p class="card-text flex-grow-1">{{ product.description|truncatewords:15 }}</p>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="h5 text-primary mb-0">${{ product.price }}</span>
+                                    {% if product.is_in_stock %}
+                                        <small class="text-success">
+                                            <i class="fas fa-check-circle"></i> In Stock
+                                        </small>
+                                    {% else %}
+                                        <small class="text-danger">
+                                            <i class="fas fa-times-circle"></i> Out of Stock
+                                        </small>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="d-grid">
+                                    <a href="{% url 'product:detail' product.slug %}" class="btn btn-primary btn-sm">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Featured products pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-star fa-3x text-muted mb-3"></i>
+            <h4>No featured products</h4>
+            <p class="text-muted">Featured products will appear here once they are selected.</p>
+            <a href="{% url 'product:list' %}" class="btn btn-primary">Browse All Products</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ make }} Products - ElectroHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'product:list' %}">Products</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'product:brands' %}">Brands</a></li>
+            <li class="breadcrumb-item active">{{ make }}</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            {{ make }} Products
+            {% if total_products %}
+                <small class="text-muted">({{ total_products }} found)</small>
+            {% endif %}
+        </h2>
+        
+        <!-- Sort Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="fas fa-sort me-2"></i>Sort By
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}">Default</a></li>
+                <li><a class="dropdown-item" href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort=price_low">Price: Low to High</a></li>
+                <li><a class="dropdown-item" href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort=price_high">Price: High to Low</a></li>
+                <li><a class="dropdown-item" href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort=name_az">Name: A to Z</a></li>
+                <li><a class="dropdown-item" href="?{% for key, value in request.GET.items %}{% if key != 'sort' %}{{ key }}={{ value }}&{% endif %}{% endfor %}sort=newest">Newest First</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    {% if page_obj %}
+        <div class="row">
+            {% for product in page_obj %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card h-100">
+                        {% if product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" class="card-img-top" 
+                                 alt="{{ product.title }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">{{ product.title }}</h6>
+                            <p class="card-text flex-grow-1">{{ product.description|truncatewords:15 }}</p>
+                            
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="h5 text-primary mb-0">${{ product.price }}</span>
+                                    {% if product.is_in_stock %}
+                                        <small class="text-success">
+                                            <i class="fas fa-check-circle"></i> In Stock
+                                        </small>
+                                    {% else %}
+                                        <small class="text-danger">
+                                            <i class="fas fa-times-circle"></i> Out of Stock
+                                        </small>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if product.is_featured %}
+                                    <span class="badge bg-warning text-dark mb-2">Featured</span>
+                                {% endif %}
+                                
+                                <div class="d-grid">
+                                    <a href="{% url 'product:detail' product.slug %}" class="btn btn-primary btn-sm">
+                                        View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Brand products pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h4>No products found for {{ make }}</h4>
+            <p class="text-muted">There are currently no products from this brand.</p>
+            <a href="{% url 'product:brands' %}" class="btn btn-primary">Browse Other Brands</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
