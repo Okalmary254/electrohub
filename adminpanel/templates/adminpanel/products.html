@@ -1,0 +1,176 @@
+{% extends "adminpanel/dashboard.html" %}
+{% block content %}
+<style>
+    /* Sticky Header */
+    header {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 1000;
+        padding: 10px 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Category Chips */
+    .chips-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 1em 0;
+        justify-content: start;
+    }
+
+    .chip {
+        background: #e0e0e0;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .chip.active {
+        background: #007bff;
+        color: white;
+        transform: scale(1.05);
+    }
+
+    /* Search Box */
+    .search-container {
+        margin: 1em 0;
+    }
+
+    #search {
+        padding: 8px;
+        width: 100%;
+        max-width: 400px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    /* Product Cards */
+    .products-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .product-card {
+        border: 1px solid #ddd;
+        padding: 16px;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+    .product-card:hover {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<h3>Manage Products</h3>
+<a href="{% url 'add_product' %}" class="btn btn-success">+ Add New Product</a>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Actions</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.price }}</td>
+        <td>{{ product.stock }}</td>
+        <td>
+            <a href="{% url 'edit_product' %}">Edit</a> |
+            <a href="(% url 'delete_product' %)">Delete</a> |
+            <a href="#">Make Deal</a>
+        </td>
+    </tr>
+    <a href="{% url 'product_detail' product.pk %}">
+        <div class="card">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">${{ product.price }}</p>
+            </div>
+        </div>
+    </a>
+    <a href="{% url 'product_detail' product.pk %}">
+        <div class="card">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">${{ product.price }}</p>
+            </div>
+        </div>
+    </a>
+
+    <!-- Category Chips -->
+    <div id="category-chips" class="chips-container">
+        <button class="chip active" data-category="all">All</button>
+        {% for category in categories %}
+        <button class="chip" data-category="{{ category.name|slugify }}">{{ category.name }}</button>
+        {% endfor %}
+    </div>
+
+    <!-- Search Input -->
+    <div class="search-container">
+        <input type="text" id="search" placeholder="Search products...">
+    </div>
+
+    <!-- Product Grid -->
+    <div class="products-container">
+        {% for product in products %}
+        <div class="product-card" data-category="{{ product.category.name|slugify }}"
+            data-name="{{ product.name|lower }}">
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <span>{{ product.category.name }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+
+    {% endfor %}
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const chips = document.querySelectorAll(".chip");
+        const products = document.querySelectorAll(".product-card");
+        const searchInput = document.getElementById("search");
+
+        function filterProducts() {
+            const selectedCategory = document.querySelector(".chip.active").dataset.category;
+            const searchTerm = searchInput.value.toLowerCase();
+
+            products.forEach(product => {
+                const name = product.dataset.name;
+                const category = product.dataset.category;
+
+                const matchesSearch = name.includes(searchTerm);
+                const matchesCategory = selectedCategory === "all" || category === selectedCategory;
+
+                if (matchesSearch && matchesCategory) {
+                    product.style.display = "block";
+                } else {
+                    product.style.display = "none";
+                }
+            });
+        }
+
+        chips.forEach(chip => {
+            chip.addEventListener("click", () => {
+                document.querySelector(".chip.active").classList.remove("active");
+                chip.classList.add("active");
+                filterProducts();
+            });
+        });
+
+        searchInput.addEventListener("input", filterProducts);
+    });
+</script>
+
+{% endblock %}

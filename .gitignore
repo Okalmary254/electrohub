@@ -1,0 +1,21 @@
+# .gitignore
+
+# Environment variables
+.env
+
+# Python
+*.pyc
+__pycache__/
+
+# Django
+db.sqlite3
+/media/
+/staticfiles/
+
+# VS Code / JetBrains
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
