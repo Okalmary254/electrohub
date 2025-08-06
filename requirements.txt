@@ -1,0 +1,26 @@
+# Core Framework
+Django>=4.2
+
+# Database Connector (if using MySQL)
+mysqlclient>=2.2.0
+
+# Media/Image handling
+Pillow>=10.0.0
+
+# Environment Variables
+python-decouple>=3.8
+
+# For modern frontend templates 
+django-crispy-forms>=2.1
+
+# If you're using Bootstrap in forms
+crispy-bootstrap5>=0.7
+
+# Optional: security, cleanup
+django-cleanup>=8.0.0
+
+# Optional: static file handling
+whitenoise>=6.6.0
+
+# Optional: WSGI server for production
+gunicorn>=21.2.0
