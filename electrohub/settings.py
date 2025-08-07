@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     "cart",
     "order",
     "product",
+    "auth",  # Custom authentication app
 ]
 
 MIDDLEWARE = [
