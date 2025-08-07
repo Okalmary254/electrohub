@@ -7,7 +7,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("products/", include('product.urls')),
     path("cart/", include('cart.urls')),
-    path("orders/", include('order.urls')),
+    path("orders/", include('order.urls', namespace='order')),
     path("auth/", include('authapp.urls', namespace='authapp')),  # Ensure this matches your auth app's urls.py
     path("", include('electrohub.urls')),  # Main app URLs
 ]
