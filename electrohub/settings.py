@@ -20,7 +20,7 @@ INSTALLED_APPS = [
     "cart",
     "order",
     "product",
-    "auth",  
+    "authapp",  
     "django.contrib.humanize",
 ]
 

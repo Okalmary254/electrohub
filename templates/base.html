@@ -62,17 +62,17 @@
                             <i class="fas fa-user me-1"></i>{{ user.username }}
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'auth:profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'authapp:profile' %}">Profile</a></li>
                             <li><a class="dropdown-item" href="{% url 'order:list' %}">Orders</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="{% url 'auth:logout' %}">Logout</a></li>
+                            <li><a class="dropdown-item" href="{% url 'authapp:logout' %}">Logout</a></li>
                         </ul>
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'auth:login' %}">Login</a>
+                        <a class="nav-link" href="{% url 'authapp:login' %}">Login</a>
                     </li>
                     {% endif %}
                     <li class="nav-item dropdown">
