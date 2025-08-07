@@ -15,7 +15,7 @@ def register_view(request):
             return redirect('login')
     else:
         form = UserCreationForm()
-    return render(request, 'auth/register.html', {'form': form})
+    return render(request, 'authapp/register.html', {'form': form})
 
 def login_view(request):
     if request.method == 'POST':
@@ -28,7 +28,7 @@ def login_view(request):
             messages.error(request, "Invalid credentials.")
     else:
         form = AuthenticationForm()
-    return render(request, 'auth/login.html', {'form': form})
+    return render(request, 'authapp/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
@@ -36,4 +36,4 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    return render(request, 'auth/profile.html', {'user': request.user})
+    return render(request, 'authapp/profile.html', {'user': request.user})
