@@ -115,8 +115,7 @@ class OrderItem(models.Model):
         return f"{self.quantity} x {self.product_title}"
 
     def save(self, *args, **kwargs):
-        # Calculate subtotal and store product details
-        self.subtotal = self.unit_price * self.quantity
+        self.subtotal = Decimal(self.unit_price) * Decimal(self.quantity)
         if self.product:
             self.product_title = self.product.title
             self.product_sku = self.product.sku
