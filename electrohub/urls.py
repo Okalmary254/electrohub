@@ -15,7 +15,7 @@ urlpatterns = [
     # path("", include('users.urls', namespace='users')),  
     path("", include('core.urls', namespace='core')),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Serve media files in development mode
 if settings.DEBUG:
