@@ -1,0 +1,61 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.navbar-brand i {
+    color: #ffc107;
+}
+
+.cart-badge {
+    font-size: 0.9rem;
+    padding: 0.3em 0.6em;
+}
+
+.card {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 0.5rem;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.btn-primary, .btn-outline-primary {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-primary:hover, .btn-outline-primary:hover {
+    background-color: #003d80;
+    border-color: #003d80;
+}
+
+.badge.bg-warning {
+    color: #212529;
+    background-color: #ffc107;
+}
+
+.alert {
+    border-radius: 0.4rem;
+}
+
+.carousel-indicators img {
+    border-radius: 0.25rem;
+    border: 2px solid #dee2e6;
+}
+
+footer {
+    background: #212529;
+    color: #fff;
+}
+
+footer a {
+    color: #ffc107;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
