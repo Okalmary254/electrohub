@@ -12,7 +12,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             messages.success(request, "Registration successful.")
-            return redirect('login')
+            return redirect('core:home')  # Redirect to landing page
     else:
         form = UserCreationForm()
     return render(request, 'authapp/register.html', {'form': form})
@@ -22,17 +22,20 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            login(request, user)
-            return redirect('profile')
+            if user is not None:
+                login(request, user)
+                return redirect('authapp:profile')
+            else:
+                messages.error(request, "User not found.")
         else:
-            messages.error(request, "Invalid credentials.")
+            messages.error(request, "User not found.")
     else:
         form = AuthenticationForm()
     return render(request, 'authapp/login.html', {'form': form})
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('authapp:login')
 
 @login_required
 def profile_view(request):

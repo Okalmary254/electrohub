@@ -6,6 +6,8 @@ from product.models import Product, ProductImage
 from django import forms
 import uuid
 from django.utils.text import slugify
+from django.contrib.auth import get_user_model
+from order.models import Order
 
 class ProductForm(forms.ModelForm):
     image = forms.ImageField(required=False, label="Main Image")
@@ -20,8 +22,18 @@ def product_list(request):
     products = Product.objects.all()
     return render(request, 'product/product_list.html', {'products': products})
 def dashboard(request):
-    # You can add stats, recent orders, etc. here
-    return render(request, 'core/dashboard.html')
+    total_products = Product.objects.count()
+    total_orders = Order.objects.count()
+    pending_orders = Order.objects.filter(status='pending').count()
+    total_users = get_user_model().objects.count()
+    products = Product.objects.select_related('category').all()
+    return render(request, 'core/dashboard.html', {
+        'total_products': total_products,
+        'total_orders': total_orders,
+        'pending_orders': pending_orders,
+        'total_users': total_users,
+        'products': products,
+    })
 def product_add(request):
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
