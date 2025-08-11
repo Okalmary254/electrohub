@@ -115,7 +115,38 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer removed -->
+    {% block footer %}
+    <footer class="bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>ElectroHub</h5>
+                    <p>Your one-stop shop for electronics and electrical components.</p>
+                </div>
+                <div class="col-md-3">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'product:list' %}" class="text-light">Products</a></li>
+                        <li><a href="{% url 'product:category_list' %}" class="text-light">Categories</a></li>
+                        <li><a href="{% url 'product:featured' %}" class="text-light">Featured</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light">Contact Us</a></li>
+                        <li><a href="#" class="text-light">FAQ</a></li>
+                        <li><a href="#" class="text-light">Shipping Info</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2025 ElectroHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
