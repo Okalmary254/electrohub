@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: electrohub
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn backend.wsgi
+    releaseCommand: python manage.py migrate
