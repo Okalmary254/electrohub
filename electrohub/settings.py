@@ -8,7 +8,8 @@ SECRET_KEY = "django-insecure-dmlvlu%4hr(o!=pxcfa)q40qp58^_d85v!y&klfem(4rl%e0y0
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['electrohubb.onrender.com', 'localhost', '127.0.0.1']
+
 
 
 INSTALLED_APPS = [
