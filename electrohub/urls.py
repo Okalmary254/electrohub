@@ -12,8 +12,7 @@ urlpatterns = [
     path("cart/", include('cart.urls', namespace='cart')),
     path("orders/", include('order.urls', namespace='order')),
     path("auth/", include('authapp.urls', namespace='authapp')),
-    # path("", include('users.urls', namespace='users')),  
-    path("", include('core.urls', namespace='core')),
+    path("", include('core.urls', namespace='core')),  # Use core app for dashboard/home
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
